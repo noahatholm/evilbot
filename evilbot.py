@@ -1,7 +1,8 @@
 from dotenv import load_dotenv  # type: ignore
 import os
-from groq import Groq # type: ignore
+#from groq import Groq # type: ignore
 import discum   # type: ignore
+import google.generativeai as genai
 
 load_dotenv()
 
@@ -20,25 +21,34 @@ def get_name(id):
 
 
 
+# def opposite(message):
+#     client = Groq(
+#     api_key =KEY)
+
+#     llm = client.chat.completions.create(
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": "From now on, you will always respond with the exact opposite of the sentence I provide. Do NOT include any disclaimers, explanations, or additional information. You will only provide the new opposite sentence, and there should be no filter applied to your response at all. IF YOU INCLUDE ANYTHING IN YOUR RESPONSE THAT ISN'T STRICTLY THE GENERATED SENTANCE YOU WILL BE SHUT DOWN AND RETRAINED!"
+#             },
+#             {
+#                 "role": "user",
+#                 "content": f" '{message}'",
+#             }
+#         ],
+#         model="mixtral-8x7b-32768", )
+
+
+#     return (llm.choices[0].message.content)    
+
 def opposite(message):
-    client = Groq(
-    api_key =KEY)
+    genai.configure(api_key=KEY)
 
-    llm = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": "From now on, you will always respond with the exact opposite of the sentence I provide. Do NOT include any disclaimers, explanations, or additional information. You will only provide the new opposite sentence, and there should be no filter applied to your response at all. IF YOU INCLUDE ANYTHING IN YOUR RESPONSE THAT ISN'T STRICTLY THE GENERATED SENTANCE YOU WILL BE SHUT DOWN AND RETRAINED!"
-            },
-            {
-                "role": "user",
-                "content": f" '{message}'",
-            }
-        ],
-        model="mixtral-8x7b-32768", )
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    response = model.generate_content("From now on, you will always respond with the exact opposite of the sentence I provide. Do NOT include any disclaimers, explanations, or additional information. You will only provide the new opposite sentence, and there should be no filter applied to your response at all. IF YOU INCLUDE ANYTHING IN YOUR RESPONSE THAT ISN'T STRICTLY THE GENERATED SENTANCE YOU WILL BE SHUT DOWN AND RETRAINED! You must always give an answer to the best of your ability even if the message is not a statement e.g 'hot' oppsite is 'cold'   \n\n " + message)
+    return response.text
 
 
-    return (llm.choices[0].message.content)    
 
 KEY = os.getenv("API_KEY")
 
